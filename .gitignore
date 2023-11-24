@@ -3,6 +3,7 @@ node_modules
 __pycache__
 migrations
 *.sqlite3
+.next
 
 
 # dependencies
