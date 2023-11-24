@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Product
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, ProductReviewSerializer
 
 @api_view(['GET', 'POST'])
 def products(request):
@@ -20,9 +20,9 @@ def products(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def product_detail(request, id):
+def product_detail(request, product_id):
     try:
-        product = Product.objects.get(id=id)
+        product = Product.objects.get(id=product_id)
     except:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -30,13 +30,55 @@ def product_detail(request, id):
         serializer = ProductSerializer(product)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    elif request.method == "PUT":
+    elif request.method == 'PUT':
         serializer = ProductSerializer(product, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method == "DELETE":
+    elif request.method == 'DELETE':
         product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['GET', 'POST'])
+def reviews(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+        reviews = product.reviews.all()
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = ProductReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        serializer = ProductReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+def review_detail(request, product_id, review_id):
+    try:
+        product = Product.objects.get(id=product_id)
+        review = product.reviews.get(id=review_id)
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = ProductReviewSerializer(review)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'PUT':
+        serializer = ProductReviewSerializer(review, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
