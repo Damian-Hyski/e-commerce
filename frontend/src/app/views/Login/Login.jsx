@@ -11,11 +11,16 @@ export function Login() {
 
     useEffect(() => {
         const fetchCsrfToken = async () => {
-            await fetch("http://127.0.0.1:8001/auth/csrf", {
-                credentials: "include",
-            });
-            const token = Cookies.get("csrftoken");
-            setCsrfToken(token);
+            const existingToken = Cookies.get("csrftoken");
+            if (!existingToken) {
+                await fetch("http://127.0.0.1:8001/auth/csrf", {
+                    credentials: "include",
+                });
+                const newToken = Cookies.get("csrftoken");
+                setCsrfToken(newToken);
+            } else {
+                setCsrfToken(existingToken);
+            }
         };
 
         fetchCsrfToken();
