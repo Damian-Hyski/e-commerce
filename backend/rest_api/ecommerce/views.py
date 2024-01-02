@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -6,8 +8,15 @@ from rest_framework import status
 from .models import Product
 from .serializers import ProductSerializer, ProductReviewSerializer
 
-# User
+# Authenticate
+@api_view(['GET'])
+def csrf(request):
+    response = Response()
+    response.set_cookie('csrftoken', get_token(request))
+    return response
+
 @api_view(['POST'])
+@csrf_protect
 def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
@@ -55,7 +64,7 @@ def product_detail(request, product_id):
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# Review
+# Product > Review
 @api_view(['GET', 'POST'])
 def reviews(request, product_id):
     try:
