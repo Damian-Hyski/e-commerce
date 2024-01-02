@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_protect
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Product
-from .serializers import ProductSerializer, ProductReviewSerializer
+from .serializers import ProductSerializer, ProductReviewSerializer, UserSerializer
 
 # Authenticate
 @api_view(['GET'])
@@ -17,15 +18,23 @@ def csrf(request):
 
 @api_view(['POST'])
 @csrf_protect
-def login(request):
+def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
 
     user = authenticate(username=username, password=password)
     if user is not None:
+        login(request, user)
         return Response({'message': 'Pomyślnie zalogowano'}, status=status.HTTP_200_OK)
     else:
         return Response({'message': 'Nieprawidłowe dane logowania'}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['GET'])
+@login_required
+def user_view(request):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # Product
 @api_view(['GET', 'POST'])

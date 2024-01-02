@@ -4,7 +4,8 @@ from . import views
 urlpatterns = [
     # authenticate
     path('auth/csrf', views.csrf),
-    path('auth/login', views.login),
+    path('auth/login', views.login_view),
+    path('auth/user', views.user_view),
 
     # Product
     path('products/', views.products),
