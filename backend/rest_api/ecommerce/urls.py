@@ -2,9 +2,13 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # authenticate
+    # CSRF Token
     path('auth/csrf', views.csrf),
+
+    # authenticate
     path('auth/login', views.login_view),
+    path('auth/status', views.check_login_status),
+    path('auth/logout', views.logout_view),
     path('auth/user', views.user_view),
 
     # Product

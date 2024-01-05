@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_protect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -9,13 +9,18 @@ from rest_framework import status
 from .models import Product
 from .serializers import ProductSerializer, ProductReviewSerializer, UserSerializer
 
-# Authenticate
+
+# CSRF Token
 @api_view(['GET'])
 def csrf(request):
     response = Response()
     response.set_cookie('csrftoken', get_token(request))
     return response
 
+
+
+
+# Authenticate
 @api_view(['POST'])
 @csrf_protect
 def login_view(request):
@@ -30,11 +35,29 @@ def login_view(request):
         return Response({'message': 'Nieprawidłowe dane logowania'}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET'])
+def check_login_status(request):
+    if request.user.is_authenticated:
+        # Użytkownik jest zalogowany
+        return Response({'is_logged_in': True}, status=status.HTTP_200_OK)
+    
+    # Użytkownik nie jest zalogowany
+    return Response({'is_logged_in': False}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
 @login_required
 def user_view(request):
     user = request.user
     serializer = UserSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@csrf_protect
+def logout_view(request):
+    logout(request)
+    return Response({'message': 'Pomyślnie wylogowano'}, status=status.HTTP_200_OK)
+
+
+
 
 # Product
 @api_view(['GET', 'POST'])
