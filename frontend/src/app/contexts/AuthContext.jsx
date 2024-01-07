@@ -3,8 +3,8 @@ import React, { createContext, useState } from "react";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+export const AuthProvider = ({ status, children }) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(status);
 
     // Funkcja logująca użytkownika
     const loginUser = async (username, password, csrfToken) => {
