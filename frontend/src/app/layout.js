@@ -1,9 +1,9 @@
+import "./globals.css";
 import { cookies } from "next/headers";
-import { NavBar } from "./components/NavBar/NavBar";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CsrfProvider } from "./contexts/CsrfContext";
-import "./globals.css";
 import { Poppins } from "next/font/google";
+import { Navigation } from "./components/Navigation";
 
 const poppins = Poppins({
     style: ["normal"],
@@ -37,7 +37,7 @@ export default async function RootLayout({ children }) {
             <body className={poppins.className}>
                 <AuthProvider status={is_logged_in}>
                     <CsrfProvider>
-                        <NavBar />
+                        <Navigation />
                         {children}
                     </CsrfProvider>
                 </AuthProvider>

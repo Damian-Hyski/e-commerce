@@ -1,5 +1,11 @@
-import { Hero } from "../components/Hero/Hero";
+import { Hero } from "../components/Hero";
+import { ProductSection } from "../components/ProductSection";
 
 export function HomePage() {
-    return <Hero />;
+  return (
+    <>
+      <Hero />
+      <ProductSection />
+    </>
+  );
 }
