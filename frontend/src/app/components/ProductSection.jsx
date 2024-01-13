@@ -42,7 +42,7 @@ export function ProductSection() {
       ref={productSectionRef}
       className="container-fluid h-screen overflow-hidden bg-light"
     >
-      <div className="container mx-auto flex h-screen flex-col gap-8 pt-32">
+      <div className="container mx-auto flex h-screen flex-col gap-8 pt-32 pb-8">
         <h3 className="text-4xl font-black uppercase text-dark">
           Sed ut perspiciatis.
         </h3>
