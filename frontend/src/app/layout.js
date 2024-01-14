@@ -4,11 +4,12 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { CsrfProvider } from "./contexts/CsrfContext";
 import { Poppins } from "next/font/google";
 import { Navigation } from "./components/Navigation";
+import { Footer } from "./components/Footer";
 
 const poppins = Poppins({
     style: ["normal"],
     subsets: ["latin"],
-    weight: ["500", "900"],
+    weight: ["300", "500", "700", "900"],
 });
 
 export const metadata = {
@@ -39,6 +40,7 @@ export default async function RootLayout({ children }) {
                     <CsrfProvider>
                         <Navigation />
                         {children}
+                        <Footer />
                     </CsrfProvider>
                 </AuthProvider>
             </body>
