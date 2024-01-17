@@ -26,7 +26,7 @@ export function ProductSection() {
     const containerWidth = bookContainerRef.current.offsetWidth;
 
     gsap.to(bookContainerRef.current, {
-      x: () => `-${6 * bookWidth - containerWidth}px`,
+      x: () => `-${4 * bookWidth - containerWidth}px`,
       ease: "none",
       scrollTrigger: {
         trigger: productSectionRef.current,
@@ -42,7 +42,7 @@ export function ProductSection() {
       ref={productSectionRef}
       className="container-fluid h-screen overflow-hidden bg-light"
     >
-      <div className="container mx-auto flex h-screen flex-col gap-8 pt-32 pb-8">
+      <div className="container mx-auto flex h-screen flex-col gap-8 pb-8 pt-32">
         <h3 className="text-4xl font-black uppercase text-dark">
           Sed ut perspiciatis.
         </h3>
@@ -51,13 +51,26 @@ export function ProductSection() {
             ref={bookRef}
             src={BookCover}
             alt="Book Cover"
-            className="size-full"
+            className="h-full w-auto"
           />
-          <Image src={BookCover} alt="Book Cover" className="size-full" />
-          <Image src={BookCover} alt="Book Cover" className="size-full" />
-          <Image src={BookCover} alt="Book Cover" className="size-full" />
-          <Image src={BookCover} alt="Book Cover" className="size-full" />
-          <Image src={BookCover} alt="Book Cover" className="size-full" />
+          <Image
+            ref={bookRef}
+            src={BookCover}
+            alt="Book Cover"
+            className="h-full w-auto"
+          />
+          <Image
+            ref={bookRef}
+            src={BookCover}
+            alt="Book Cover"
+            className="h-full w-auto"
+          />
+          <Image
+            ref={bookRef}
+            src={BookCover}
+            alt="Book Cover"
+            className="h-full w-auto"
+          />
         </div>
       </div>
     </div>
