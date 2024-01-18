@@ -4,13 +4,13 @@ import Star from "/public/Star.svg";
 
 export function ProductInformation() {
   return (
-    <div className="container-fluid h-screen bg-custom-gradient p-3 pb-8 pt-28">
+    <div className="container-fluid h-screen bg-custom-gradient p-3 pb-8 pt-24">
       <div className="container mx-auto">
         <div className="flex w-full">
           <div className="w-full">
-            <Image src={BookCover} alt="Book Cover" className=" -ml-10 -mt-6" />
+            <Image src={BookCover} alt="Book Cover" className="-ml-10 -mt-6 w-[90%]" />
           </div>
-          <div className="flex w-full flex-col gap-16 uppercase leading-4 text-light">
+          <div className="flex w-full flex-col uppercase leading-4 text-light justify-between">
             <div className="flex w-full flex-col gap-3 uppercase leading-4 text-light">
               <div className="flex gap-3">
                 <Image src={Star} />
@@ -71,7 +71,7 @@ export function ProductInformation() {
                 </p>
               </div>
             </div>
-            <div className="flex w-full flex-col gap-2 items-end">
+            <div className="flex w-full flex-col gap-2 items-end mb-16">
               <div className="flex items-end gap-8">
                 <p className="line-through">25.99 zł</p>
                 <p className="text-4xl leading-8">21.81 zł</p>
