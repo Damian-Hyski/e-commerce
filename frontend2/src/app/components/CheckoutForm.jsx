@@ -15,7 +15,7 @@ export function CheckoutForm() {
                         <h4 className="font-black">Twoje dane</h4>
                         <div className="flex flex-col gap-2">
                             <div>
-                                <label htmlFor="name">Login</label>
+                                <label htmlFor="name">Imię i nazwisko</label>
                             </div>
                             <input
                                 className="border border-dark rounded-xl px-4 py-2"
