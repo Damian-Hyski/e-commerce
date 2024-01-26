@@ -1,13 +1,28 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { CsrfContext } from "../contexts/CsrfContext";
+import { AuthContext } from "../contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export function SignInSection() {
+    const { csrfToken } = useContext(CsrfContext);
+    const { loginUser, isLoggedIn, checkLoginStatus } = useContext(AuthContext);
     const [usernameValue, setUsernameValue] = useState("");
     const [passwordValue, setPasswordValue] = useState("");
+    const router = useRouter();
+
+    useEffect(() => {
+        checkLoginStatus();
+        if (isLoggedIn) {
+            router.push("/");
+        }
+    }, [isLoggedIn])
 
     async function handleSubmit(event) {
         event.preventDefault();
+        await loginUser(usernameValue, passwordValue, csrfToken);
+        checkLoginStatus();
     }
 
     return (

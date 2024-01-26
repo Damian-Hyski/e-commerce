@@ -1,9 +1,7 @@
-import { LoginPanel } from "../components/LoginPanel/LoginPanel";
+import { SignInSection } from "../components/SignInSection";
 
-export default function Home() {
+export default function SignIn() {
     return (
-        <>
-            <LoginPanel />
-        </>
-    );
+        <SignInSection />
+    )
 }

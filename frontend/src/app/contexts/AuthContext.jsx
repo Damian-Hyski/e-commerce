@@ -9,7 +9,7 @@ export const AuthProvider = ({ status, children }) => {
     // Funkcja logująca użytkownika
     const loginUser = async (username, password, csrfToken) => {
         try {
-            const response = await fetch("http://127.0.0.1:8001/auth/login", {
+            const response = await fetch("http://127.0.0.1:8000/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -32,7 +32,7 @@ export const AuthProvider = ({ status, children }) => {
     // Funkcja sprawdzająca stan zalogowania
     const checkLoginStatus = async () => {
         try {
-            const response = await fetch("http://127.0.0.1:8001/auth/status", {
+            const response = await fetch("http://127.0.0.1:8000/auth/status", {
                 method: "GET",
                 credentials: "include",
             });
@@ -59,7 +59,7 @@ export const AuthProvider = ({ status, children }) => {
     // Funkcja wylogowywująca użytkownika
     const logoutUser = async (csrfToken) => {
         try {
-            const response = await fetch("http://127.0.0.1:8001/auth/logout", {
+            const response = await fetch("http://127.0.0.1:8000/auth/logout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

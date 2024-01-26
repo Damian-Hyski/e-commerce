@@ -18,6 +18,9 @@ class Product(models.Model):
     quantity_in_stock = models.IntegerField(verbose_name='Ilość sztuk w magazynie')
     status = models.BooleanField(default=False, verbose_name='Opublikuj')
 
+    def __str__(self):
+        return self.name
+
 class ProductReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name='Użytkownik')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, verbose_name='Produkt', related_name='reviews')

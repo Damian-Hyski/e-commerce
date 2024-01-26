@@ -8,7 +8,7 @@ export function Book() {
             <Image
                 src={BookCover}
                 alt="Book Cover"
-                className="product-image h-full"
+                className="product-image h-full w-auto"
             />
             <div className="image-overlay absolute inset-0 p-4">
                 <Link

@@ -1,5 +1,11 @@
 from django.contrib import admin
 from .models import Product, ProductReview
 
-admin.site.register(Product)
-admin.site.register(ProductReview)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['name', 'current_price', 'in_stock', 'quantity_in_stock', 'status']
+
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = ['product', 'rating', 'date']
+
+admin.site.register(Product, ProductAdmin)
+admin.site.register(ProductReview, ProductReviewAdmin)

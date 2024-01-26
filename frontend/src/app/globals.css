@@ -7,11 +7,11 @@
 }
 
 .product-hover:hover .product-image {
-  filter: blur(2px);
+  filter: blur(4px);
 }
 
 .image-overlay {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease;
   opacity: 0;
   position: absolute;
   top: 2rem;
@@ -27,5 +27,5 @@
 }
 
 .product-image {
-  transition: filter 0.3s ease;
+  transition: filter 0.2s ease;
 }

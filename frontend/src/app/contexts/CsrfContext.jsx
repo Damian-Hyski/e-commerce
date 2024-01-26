@@ -12,7 +12,7 @@ export const CsrfProvider = ({ children }) => {
             try {
                 const existingToken = Cookies.get("csrftoken");
                 if (!existingToken) {
-                    await fetch("http://127.0.0.1:8001/auth/csrf", {
+                    await fetch("http://127.0.0.1:8000/auth/csrf", {
                         credentials: "include",
                     });
                     const newToken = Cookies.get("csrftoken");
