@@ -10,14 +10,18 @@ import BoxArrowRight from "/public/BoxArrowRight.svg";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useLoginStatus } from "../contexts/LoginStatusContext";
+import { useLogoutUser } from "../contexts/LogoutUserContext";
+import { useCsrfToken } from "../contexts/CsrfTokenContext";
 
 export function Navbar() {
   const { loginStatus } = useLoginStatus();
+  const { csrfToken } = useCsrfToken();
+  const { logoutUser } = useLogoutUser();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef();
 
   async function handleButton() {
-    // await logoutUser(csrfToken);
+    logoutUser(csrfToken);
     setIsOpen(false);
   }
 

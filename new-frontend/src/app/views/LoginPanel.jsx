@@ -26,7 +26,8 @@ export function LoginPanel() {
   async function handleSubmit(event) {
     event.preventDefault();
     loginUser(usernameValue, passwordValue, csrfToken);
-    // checkLoginStatus();
+    setUsernameValue("")
+    setPasswordValue("")
   }
 
   return (
