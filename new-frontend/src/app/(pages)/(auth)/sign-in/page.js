@@ -4,12 +4,10 @@ import { LoginPanel } from "@/app/views/LoginPanel";
 
 export default function SignIn() {
   return (
-    <div className="flex h-screen w-full items-center justify-center">
-      <CsrfTokenProvider>
-        <LoginUserProvider>
-          <LoginPanel />
-        </LoginUserProvider>
-      </CsrfTokenProvider>
-    </div>
+    <CsrfTokenProvider>
+      <LoginUserProvider>
+        <LoginPanel />
+      </LoginUserProvider>
+    </CsrfTokenProvider>
   );
 }
