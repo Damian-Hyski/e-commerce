@@ -1,19 +1,51 @@
-"use client"
+"use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormContainer } from "../components/FormContainer";
 import { InputField } from "../components/ImputField";
 import Link from "next/link";
+import { useRegisterUser } from "../contexts/RegisterUserContext";
+import { useCsrfToken } from "../contexts/CsrfTokenContext";
+
+import { useLoginStatus } from "../contexts/LoginStatusContext";
+import { useRouter } from "next/navigation";
 
 export function RegistrationPanel() {
+  const { csrfToken } = useCsrfToken();
+  const { registerUser } = useRegisterUser();
+  const { loginStatus } = useLoginStatus();
+
   const [usernameValue, setUsernameValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [password2Value, setPassword2Value] = useState("");
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loginStatus) {
+      router.push("/");
+    }
+  }, [loginStatus]);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    registerUser(
+      usernameValue,
+      emailValue,
+      passwordValue,
+      password2Value,
+      csrfToken,
+    );
+    setUsernameValue("");
+    setEmailValue("");
+    setPasswordValue("");
+    setPassword2Value("");
+  }
+
   return (
     <FormContainer title="Zarejestruj się">
-      <form method="POST">
+      <form method="POST" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <InputField
             type="text"
@@ -56,7 +88,7 @@ export function RegistrationPanel() {
             autoComplete="off"
             value={password2Value}
             onChange={(e) => {
-              setPasswordValue(e.target.value);
+              setPassword2Value(e.target.value);
             }}
           />
           <div className="flex w-full items-center justify-between gap-4">
