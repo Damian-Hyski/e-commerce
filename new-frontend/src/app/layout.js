@@ -1,3 +1,4 @@
+import { AlertProvider } from "./contexts/AlertContext";
 import { CsrfTokenProvider } from "./contexts/CsrfTokenContext";
 import { LoginStatusProvider } from "./contexts/LoginStatusContext";
 import { LogoutUserProvider } from "./contexts/LogoutUserContext";
@@ -14,12 +15,14 @@ export default function RootLayout({ children }) {
     <html lang="pl">
       <LoginStatusProvider>
         <body>
-          <CsrfTokenProvider>
-            <LogoutUserProvider>
-              <Navbar />
-            </LogoutUserProvider>
-          </CsrfTokenProvider>
-          {children}
+          <AlertProvider>
+            <CsrfTokenProvider>
+              <LogoutUserProvider>
+                <Navbar />
+              </LogoutUserProvider>
+            </CsrfTokenProvider>
+            {children}
+          </AlertProvider>
         </body>
       </LoginStatusProvider>
     </html>
