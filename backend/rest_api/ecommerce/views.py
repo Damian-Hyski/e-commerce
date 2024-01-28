@@ -3,11 +3,12 @@ from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Product
-from .serializers import ProductSerializer, ProductReviewSerializer, UserSerializer
+from .serializers import ProductSerializer, ProductReviewSerializer, UserSerializer, RegistrationUserSerializer
 
 
 # CSRF Token
@@ -21,6 +22,17 @@ def csrf(request):
 
 
 # Authenticate
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_protect
+def register_view(request):
+    serializer = RegistrationUserSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        if user:
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['POST'])
 @csrf_protect
 def login_view(request):

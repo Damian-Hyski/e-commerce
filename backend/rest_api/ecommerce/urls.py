@@ -6,6 +6,8 @@ urlpatterns = [
     path('auth/csrf', views.csrf),
 
     # authenticate
+
+    path('auth/register', views.register_view),
     path('auth/login', views.login_view),
     path('auth/status', views.check_login_status),
     path('auth/logout', views.logout_view),
