@@ -1,7 +1,7 @@
 "use client";
 import { motion, useTransform, useScroll } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Book } from "./Book";
+import { Book } from "../components/Book";
 
 export function BooksSection() {
   const [width, setWidth] = useState({

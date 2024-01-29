@@ -1,4 +1,4 @@
-import { BooksSection } from "@/app/components/BooksSection";
+import { BooksSection } from "@/app/views/BooksSection";
 import { BookInformation } from "@/app/views/BookInformation";
 import { Reviews } from "@/app/views/Reviews";
 
