@@ -38,14 +38,24 @@ export function Navbar() {
     };
   }, [menuRef]);
 
+  const handleScroll = (e, anchor) => {
+    e.preventDefault();
+    const scrollTarget = document.querySelector(anchor);
+    if (scrollTarget) {
+      scrollTarget.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <div className="fixed left-0 top-0 w-full bg-light text-dark shadow-xl z-50">
+    <div className="fixed left-0 top-0 z-50 w-full bg-light text-dark shadow-xl">
       <div className="container mx-auto flex justify-between py-2 font-medium uppercase">
         <div className="flex">
           <Link href="/">Logo</Link>
         </div>
         <div className="flex gap-4">
-          <Link href="">Książki</Link>
+          <Link href="#books" onClick={(e) => handleScroll(e, "#books")}>
+            Książki
+          </Link>
         </div>
         <div className="flex gap-4">
           <div className="relative" ref={menuRef}>
