@@ -1,11 +1,11 @@
-import { HeroSection } from "./components/HeroSection";
-import { ProductSection } from "./components/ProductSection";
+import { BooksSection } from "./views/BooksSection";
+import { Hero } from "./views/Hero";
 
 export default function Home() {
-    return (
-        <>
-            <HeroSection />
-            <ProductSection />
-        </>
-    );
+  return (
+    <>
+      <Hero />
+      <BooksSection />
+    </>
+  );
 }
