@@ -6,6 +6,7 @@ migrations
 .next
 /.vscode
 /front
+/backend/rest_api/media
 
 # dependencies
 /node_modules
