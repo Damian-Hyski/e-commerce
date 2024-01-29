@@ -39,7 +39,7 @@ export function Navbar() {
   }, [menuRef]);
 
   return (
-    <div className="fixed left-0 top-0 w-full bg-light text-dark shadow-xl">
+    <div className="fixed left-0 top-0 w-full bg-light text-dark shadow-xl z-50">
       <div className="container mx-auto flex justify-between py-2 font-medium uppercase">
         <div className="flex">
           <Link href="/">Logo</Link>

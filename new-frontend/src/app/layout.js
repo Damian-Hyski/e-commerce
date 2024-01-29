@@ -3,6 +3,7 @@ import { CsrfTokenProvider } from "./contexts/CsrfTokenContext";
 import { LoginStatusProvider } from "./contexts/LoginStatusContext";
 import { LogoutUserProvider } from "./contexts/LogoutUserContext";
 import "./globals.css";
+import { Footer } from "./views/Footer";
 import { Navbar } from "./views/Navbar";
 
 export const metadata = {
@@ -22,6 +23,7 @@ export default function RootLayout({ children }) {
               </LogoutUserProvider>
             </CsrfTokenProvider>
             {children}
+            <Footer />
           </AlertProvider>
         </body>
       </LoginStatusProvider>
