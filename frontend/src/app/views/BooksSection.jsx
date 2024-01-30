@@ -9,6 +9,8 @@ export function BooksSection() {
     containerScrollWidth: 0,
   });
 
+  const [products, setProducts] = useState([]);
+
   const bookContainerRef = useRef(null);
   const targetRef = useRef(null);
 
@@ -28,7 +30,7 @@ export function BooksSection() {
     updateWidth();
 
     return () => window.removeEventListener("resize", updateWidth);
-  }, []);
+  }, [products]);
 
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -40,8 +42,26 @@ export function BooksSection() {
     [0, width.containerlWidth - width.containerScrollWidth + 32],
   );
 
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/products");
+        if (res.ok) {
+          const data = await res.json();
+          setProducts(data);
+        } else {
+          console.error("Failed to fetch products, status: ", res.status);
+        }
+      } catch (error) {
+        console.error("Problem with fetching products: ", error);
+      }
+    };
+
+    getProducts();
+  }, []);
+
   return (
-    <section ref={targetRef} className="relative h-[400vh] bg-light" id="books">
+    <section ref={targetRef} className="relative h-[300vh] bg-light">
       <div className="container sticky top-0 mx-auto h-screen py-24">
         <h3 className="mb-8 text-4xl font-black uppercase text-dark">
           Sed ut perspiciatis.
@@ -51,14 +71,15 @@ export function BooksSection() {
           style={{ x }}
           className="-ml-8 flex h-full"
         >
-          <Book />
-          <Book />
-          <Book />
-          <Book />
-          <Book />
-          <Book />
-          <Book />
-          <Book />
+          {products.map((product) => {
+            return (
+              <Book
+                key={product.id}
+                src={product.book_image}
+                title={product.name}
+              />
+            );
+          })}
         </motion.div>
       </div>
     </section>

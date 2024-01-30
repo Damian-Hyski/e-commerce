@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pl">
       <LoginStatusProvider>
-        <body>
+        <body className=" overflow-x-hidden">
           <AlertProvider>
             <CsrfTokenProvider>
               <LogoutUserProvider>
