@@ -1,11 +1,33 @@
+"use client";
 import Image from "next/image";
-import BookCover from "/public/BookCover.png";
 import Star from "/public/Star.svg";
 
 export async function BookInformation({ bookTitle }) {
   const data = await fetch(`http://127.0.0.1:8000/products/${bookTitle}`).then(
     (result) => result.json(),
   );
+  
+  const addToCart = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const newCartItem = {
+      id: data.id,
+      slug: data.slug,
+      title: data.title,
+      price: data.current_price,
+      image: data.book_image,
+      quantity: 1,
+    };
+
+    const existingItem = cart.find((item) => item.id === newCartItem.id);
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      cart.push(newCartItem);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+  };
 
   return (
     <div className="flex h-screen w-full items-center bg-custom-gradient p-3 pb-8 pt-32">
@@ -71,7 +93,10 @@ export async function BookInformation({ bookTitle }) {
                 <p className="text-4xl leading-8">{data.current_price} zł</p>
               </div>
               <div className="">
-                <button className="w-[325px] rounded-3xl border-2 px-8 py-4">
+                <button
+                  className="w-[325px] rounded-3xl border-2 px-8 py-4"
+                  onClick={addToCart}
+                >
                   Dodaj do koszyka
                 </button>
               </div>
