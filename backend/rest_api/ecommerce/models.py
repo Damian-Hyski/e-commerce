@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.html import mark_safe
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 RATING = (
     (1, '★☆☆☆☆'),
@@ -18,11 +19,23 @@ BINDING = (
 def user_directory_path(instance, filename):
     return 'user_{0}/{1}'.format(instance.user.id, filename)
 
+def custom_slugify(value):
+    # Mapowanie polskich znaków na łacińskie
+    polish_map = {
+        'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n', 'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+        'Ą': 'A', 'Ć': 'C', 'Ę': 'E', 'Ł': 'L', 'Ń': 'N', 'Ó': 'O', 'Ś': 'S', 'Ź': 'Z', 'Ż': 'Z',
+    }
+    for pol, lat in polish_map.items():
+        value = value.replace(pol, lat)
+    return slugify(value)
+
 
 class Product(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name='Użytkownik')
 
-    name = models.CharField(max_length=255, verbose_name='Nazwa produktu')
+    title = models.CharField(max_length=255, verbose_name='Nazwa produktu')
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+
     book_image = models.ImageField(upload_to=user_directory_path, default='product.jpg', verbose_name='Okładka książki')
     author = models.CharField(max_length=255, verbose_name='Autor')
     publisher = models.CharField(max_length=255, verbose_name='Wydawca')
@@ -41,7 +54,12 @@ class Product(models.Model):
         verbose_name_plural = 'Książki'
 
     def __str__(self):
-        return self.name
+        return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = custom_slugify(self.title)
+        super().save(*args, **kwargs)
     
     def product_image(self):
         return mark_safe('<img src ="%s" width="50" height="auto" />' % (self.book_image.url))

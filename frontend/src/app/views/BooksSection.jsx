@@ -76,7 +76,7 @@ export function BooksSection() {
               <Book
                 key={product.id}
                 src={product.book_image}
-                title={product.name}
+                slug={product.slug}
               />
             );
           })}

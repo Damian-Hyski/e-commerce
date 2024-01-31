@@ -87,9 +87,9 @@ def products(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def product_detail(request, product_id):
+def product_detail(request, slug):
     try:
-        product = Product.objects.get(id=product_id)
+        product = Product.objects.get(slug=slug)
     except:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
