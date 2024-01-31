@@ -12,6 +12,11 @@ export function CartSection() {
     setCartItems(cart);
   }, []);
 
+  const updateCart = () => {
+    const updatedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(updatedCart);
+  };
+
   const totalQuantity = cartItems.reduce((total, item) => {
     return total + item.quantity;
   }, 0);
@@ -48,11 +53,13 @@ export function CartSection() {
                 {cartItems.map((item) => (
                   <CartProduct
                     key={item.id}
+                    id={item.id}
                     slug={item.slug}
                     image={item.image}
                     title={item.title}
                     quantity={item.quantity}
                     price={item.price}
+                    updateCart={updateCart}
                   />
                 ))}
               </div>

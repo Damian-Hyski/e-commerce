@@ -49,7 +49,7 @@ export function BookInformation({ bookTitle }) {
 
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    showAlert("Dodano książke do koszyka", "success");
+    showAlert("Dodano produkt do koszyka", "success");
   };
 
   return (
@@ -57,13 +57,16 @@ export function BookInformation({ bookTitle }) {
       <div className="container mx-auto">
         <div className="flex w-full">
           <div className="w-full">
-            <Image
-              src={`http://127.0.0.1:8000/${data.book_image}`}
-              alt="Book Cover"
-              className="-ml-10 -mt-6 min-h-[90%]"
-              width={500}
-              height={710}
-            />
+            {data.book_image && (
+              <Image
+                src={`http://127.0.0.1:8000/${data.book_image}`}
+                alt="Book Cover"
+                className="-ml-10 -mt-6 min-h-[90%]"
+                width={500}
+                height={710}
+                layout="fixed"
+              />
+            )}
           </div>
           <div className="flex w-full flex-col justify-between uppercase leading-4 text-light">
             <div className="flex w-full flex-col gap-3 uppercase leading-4 text-light">
