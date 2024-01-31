@@ -12,8 +12,8 @@ RATING = (
 )
 
 BINDING = (
-    (1, 'Miękka'),
-    (2, 'Twarda')
+    ('miekka', 'Miękka'),
+    ('twarda', 'Twarda')
 )
 
 def user_directory_path(instance, filename):
@@ -41,7 +41,7 @@ class Product(models.Model):
     publisher = models.CharField(max_length=255, verbose_name='Wydawca')
     publication_date = models.DateField(verbose_name="Data Wydania")
     pages = models.IntegerField(verbose_name='Strony')
-    binding = models.IntegerField(choices=BINDING, default=None, verbose_name='Oprawa')
+    binding = models.CharField(choices=BINDING, default='miekka', max_length=255, verbose_name='Oprawa')
     release_date = models.DateField(verbose_name="Data Premiery")
     description = models.TextField(verbose_name='Opis produktu')
     current_price = models.DecimalField(max_digits=9999, decimal_places=2, verbose_name='Obecna cena')
