@@ -1,12 +1,33 @@
 "use client";
 import Image from "next/image";
 import Star from "/public/Star.svg";
+import { useEffect, useState } from "react";
+import { useAlert } from "../contexts/AlertContext";
 
-export async function BookInformation({ bookTitle }) {
-  const data = await fetch(`http://127.0.0.1:8000/products/${bookTitle}`).then(
-    (result) => result.json(),
-  );
-  
+export function BookInformation({ bookTitle }) {
+  const [data, setData] = useState({});
+  const { showAlert } = useAlert();
+
+  useEffect(() => {
+    const fetchBookInfo = async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/products/${bookTitle}`,
+        );
+        if (response.ok) {
+          const jsonData = await response.json();
+          setData(jsonData);
+        } else {
+          console.error("Nie udało się pobrać danych produktu");
+        }
+      } catch (error) {
+        console.error("Błąd sieci: ", error);
+      }
+    };
+
+    fetchBookInfo();
+  }, []);
+
   const addToCart = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -27,6 +48,8 @@ export async function BookInformation({ bookTitle }) {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
+
+    showAlert("Dodano książke do koszyka", "success");
   };
 
   return (
@@ -35,7 +58,11 @@ export async function BookInformation({ bookTitle }) {
         <div className="flex w-full">
           <div className="w-full">
             <Image
-              src={`http://127.0.0.1:8000${data.book_image}`}
+              src={
+                data.book_image
+                  ? `http://127.0.0.1:8000/${data.book_image}`
+                  : {}
+              }
               alt="Book Cover"
               className="-ml-10 -mt-6 min-h-[90%]"
               width={500}
