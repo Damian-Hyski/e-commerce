@@ -2,12 +2,15 @@
 import { motion, useTransform, useScroll } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Book } from "../components/Book";
+import classNames from "classnames";
 
 export function BooksSection() {
   const [width, setWidth] = useState({
     containerlWidth: 0,
     containerScrollWidth: 0,
   });
+
+  const [animation, setAnimation] = useState(false);
 
   const [products, setProducts] = useState([]);
 
@@ -24,6 +27,12 @@ export function BooksSection() {
           ? bookContainerRef.current.scrollWidth
           : 0,
       });
+
+      if (width.containerlWidth >= width.containerScrollWidth) {
+        setAnimation(false);
+      } else {
+        setAnimation(true);
+      }
     };
 
     window.addEventListener("resize", updateWidth);
@@ -60,15 +69,21 @@ export function BooksSection() {
     getProducts();
   }, []);
 
+  const dynamicClass = classNames({
+    "relative bg-light": true,
+    "h-[300vh]": animation === true,
+    "h-[100vh]": animation === false,
+  });
+
   return (
-    <section ref={targetRef} className="relative h-[300vh] bg-light">
+    <section ref={targetRef} className={dynamicClass} id="books">
       <div className="container sticky top-0 mx-auto h-screen py-24">
         <h3 className="mb-8 text-4xl font-black uppercase text-dark">
           Sed ut perspiciatis.
         </h3>
         <motion.div
           ref={bookContainerRef}
-          style={{ x }}
+          style={animation ? { x } : {}}
           className="-ml-8 flex h-full"
         >
           {products.map((product) => {
