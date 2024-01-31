@@ -38,13 +38,16 @@ export function Navbar() {
     };
   }, [menuRef]);
 
-  const handleScroll = (e, anchor) => {
-    e.preventDefault();
-    const scrollTarget = document.querySelector(anchor);
-    if (scrollTarget) {
-      scrollTarget.scrollIntoView({ behavior: "smooth" });
+  const handleNavigationToSection = (sectionId) => {
+    const sectionElement = document.getElementById(sectionId);
+
+    if (sectionElement) {
+      sectionElement.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.location.href = `/#${sectionId}`;
     }
   };
+
 
   return (
     <div className="fixed left-0 top-0 z-50 w-full bg-light text-dark shadow-xl">
@@ -53,7 +56,13 @@ export function Navbar() {
           <Link href="/">Logo</Link>
         </div>
         <div className="flex gap-4">
-          <Link href="#books" onClick={(e) => handleScroll(e, "#books")}>
+          <Link
+            href="#books"
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigationToSection("books");
+            }}
+          >
             Książki
           </Link>
         </div>
