@@ -26,7 +26,7 @@ export function BookInformation({ bookTitle }) {
     };
 
     fetchBookInfo();
-  }, []);
+  }, [bookTitle]);
 
   const addToCart = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -58,15 +58,11 @@ export function BookInformation({ bookTitle }) {
         <div className="flex w-full">
           <div className="w-full">
             <Image
-              src={
-                data.book_image
-                  ? `http://127.0.0.1:8000/${data.book_image}`
-                  : {}
-              }
+              src={`http://127.0.0.1:8000/${data.book_image}`}
               alt="Book Cover"
               className="-ml-10 -mt-6 min-h-[90%]"
               width={500}
-              height={10}
+              height={710}
             />
           </div>
           <div className="flex w-full flex-col justify-between uppercase leading-4 text-light">

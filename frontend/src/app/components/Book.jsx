@@ -8,9 +8,10 @@ export function Book({ src, slug }) {
         <Image
           src={`http://127.0.0.1:8000${src}`}
           alt="Book Cover"
-          className="product-image h-[623] w-[439]"
+          className="product-image"
           width={439}
           height={623}
+          priority
         />
       </Link>
     </div>

@@ -63,7 +63,7 @@ export function Navbar() {
               onClick={() => setIsOpen(!isOpen)}
               className="flex items-center uppercase"
             >
-              <Image src={PersonFill} alt="Person Icon" />
+              <Image src={PersonFill} alt="Person Icon" priority />
             </button>
             {isOpen && (
               <ul className="absolute right-0 z-20 mt-2 w-60 bg-light px-4 py-2 font-normal shadow-xl">
@@ -79,6 +79,7 @@ export function Navbar() {
                           src={Person}
                           alt="Profil Icon"
                           style={{ width: "16px", height: "16px" }}
+                          priority
                         />
                         Twój profil
                       </Link>
@@ -92,6 +93,7 @@ export function Navbar() {
                           src={BoxArrowLeft}
                           alt="Logout Icon"
                           style={{ width: "16px", height: "16px" }}
+                          priority
                         />
                         Wyloguj się
                       </button>
@@ -133,7 +135,7 @@ export function Navbar() {
             )}
           </div>
           <Link href="/cart">
-            <Image src={ShoppingCart} alt="Cart Icon" />
+            <Image src={ShoppingCart} alt="Cart Icon" priority />
           </Link>
         </div>
       </div>
