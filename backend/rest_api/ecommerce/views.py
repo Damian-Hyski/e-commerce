@@ -110,9 +110,9 @@ def product_detail(request, slug):
 
 # Product > Review
 @api_view(['GET', 'POST'])
-def reviews(request, product_id):
+def reviews(request, slug):
     try:
-        product = Product.objects.get(id=product_id)
+        product = Product.objects.get(slug=slug)
         reviews = product.reviews.all()
     except:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -129,9 +129,9 @@ def reviews(request, product_id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET', 'PUT', 'DELETE'])
-def review_detail(request, product_id, review_id):
+def review_detail(request, slug, review_id):
     try:
-        product = Product.objects.get(id=product_id)
+        product = Product.objects.get(slug=slug)
         review = product.reviews.get(id=review_id)
     except:
         return Response(status=status.HTTP_404_NOT_FOUND)

@@ -5,43 +5,64 @@ const { createContext, useEffect, useContext, useState } = require("react");
 const LoginStatusContext = createContext();
 
 export const LoginStatusProvider = ({ children }) => {
-    const [loginStatus, setLoginStatus] = useState(undefined);
+  const [userData, setUserData] = useState(undefined);
+  const [loginStatus, setLoginStatus] = useState(undefined);
 
-    const checkLoginStatus = async () => {
-        try {
-            const response = await fetch("http://127.0.0.1:8000/auth/status", {
-                method: "GET",
-                credentials: "include",
-            });
+  const checkLoginStatus = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/auth/status", {
+        method: "GET",
+        credentials: "include",
+      });
 
-            if (response.ok) {
-                const { is_logged_in } = await response.json();
-                if (is_logged_in) {
-                    setLoginStatus(true);
-                } else {
-                    setLoginStatus(false);
-                }
-            } else {
-                setLoginStatus(false);
-                console.error("Błąd przy sprawdzaniu statusu zalogowania");
-            }
-        } catch (error) {
-            setLoginStatus(false);
-            console.error("Błąd sieci: ", error);
+      if (response.ok) {
+        const { is_logged_in } = await response.json();
+        if (is_logged_in) {
+          setLoginStatus(true);
+        } else {
+          setLoginStatus(false);
         }
-    };
+      } else {
+        setLoginStatus(false);
+        console.error("Błąd przy sprawdzaniu statusu zalogowania");
+      }
+    } catch (error) {
+      setLoginStatus(false);
+      console.error("Błąd sieci: ", error);
+    }
+  };
 
-    useEffect(() => {
-        checkLoginStatus();
-    }, []);
+  const checkUserData = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/auth/user", {
+        method: "GET",
+        credentials: "include",
+      });
 
-    return (
-        <LoginStatusContext.Provider value={{loginStatus, setLoginStatus}}>
-            {children}
-        </LoginStatusContext.Provider>
-    );
+      if (response.ok) {
+        const jsonData = await response.json();
+        setUserData(jsonData);
+      } else {
+        console.error("Nie udało się pobrać danych o użytkowniku");
+      }
+    } catch (error) {
+      setLoginStatus(false);
+      console.error("Błąd sieci: ", error);
+    }
+  };
+
+  useEffect(() => {
+    checkLoginStatus();
+    checkUserData();
+  }, []);
+
+  return (
+    <LoginStatusContext.Provider value={{ loginStatus, setLoginStatus, userData }}>
+      {children}
+    </LoginStatusContext.Provider>
+  );
 };
 
 export const useLoginStatus = () => {
-    return useContext(LoginStatusContext);
+  return useContext(LoginStatusContext);
 };
