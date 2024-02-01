@@ -61,10 +61,11 @@ export function BookInformation({ bookTitle }) {
               <Image
                 src={`http://127.0.0.1:8000/${data.book_image}`}
                 alt="Book Cover"
-                className="-ml-10 -mt-6 min-h-[90%]"
+                className="-ml-10 -mt-6 min-h-[90%] w-auto"
                 width={500}
                 height={710}
-                layout="fixed"
+                style={{width: "auto", height: "710px"}}
+                priority
               />
             )}
           </div>

@@ -1,33 +1,53 @@
 "use client";
 
 import classNames from "classnames";
-
-const { createContext, useState, useCallback, useContext } = require("react");
+import {
+  createContext,
+  useState,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react";
 
 const AlertContext = createContext();
 
 export const AlertProvider = ({ children }) => {
-  const [alert, setAlert] = useState({ message: "", type: "" });
+  const [alerts, setAlerts] = useState([]);
 
   const showAlert = useCallback((message, type = "info", timeout = 5000) => {
-    setAlert({ message, type });
+    const id = new Date().getTime(); // Prosty sposób na wygenerowanie unikalnego ID
+
+    setAlerts((currentAlerts) => [...currentAlerts, { id, message, type }]);
 
     setTimeout(() => {
-      setAlert({ message: "", type: "" });
+      setAlerts((currentAlerts) =>
+        currentAlerts.filter((alert) => alert.id !== id),
+      );
     }, timeout);
   }, []);
 
-  const dynamicClass = classNames({
-    "absolute bottom-10 right-10 z-50 rounded-3xl px-8 py-4 uppercase text-light": true,
-    "bg-red": alert.type === "error",
-    "bg-yellow": alert.type === "warning",
-    "bg-green": alert.type === "success",
-  });
-
   return (
-    <AlertContext.Provider value={{ alert, showAlert }}>
+    <AlertContext.Provider value={{ showAlert }}>
       {children}
-      {alert.message && <div className={dynamicClass}>{alert.message}</div>}
+      {alerts.map((alert, index) => {
+        const bottomOffset = 10 + index * 60; // Każdy kolejny alert będzie wyżej o 60px
+        return (
+          <div
+            key={alert.id}
+            className={classNames(
+              "fixed left-10 z-50 rounded-3xl px-8 py-4 uppercase text-light",
+              {
+                "bg-red": alert.type === "error",
+                "bg-yellow": alert.type === "warning",
+                "bg-green": alert.type === "success",
+              },
+            )}
+            style={{ bottom: `${bottomOffset}px` }} // Dynamicznie przypisany margines od dołu
+          >
+            {alert.message}
+          </div>
+        );
+      })}
     </AlertContext.Provider>
   );
 };
