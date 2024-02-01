@@ -34,19 +34,21 @@ export const LoginStatusProvider = ({ children }) => {
 
   const checkUserData = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/user", {
-        method: "GET",
-        credentials: "include",
-      });
+      if (loginStatus) {
+        const response = await fetch("http://127.0.0.1:8000/auth/user", {
+          method: "GET",
+          credentials: "include",
+        });
 
-      if (response.ok) {
-        const jsonData = await response.json();
-        setUserData(jsonData);
-      } else {
-        console.error("Nie udało się pobrać danych o użytkowniku");
+        if (response.ok) {
+          const jsonData = await response.json();
+          setUserData(jsonData);
+        } else {
+          setUserData(undefined);
+        }
       }
     } catch (error) {
-      setLoginStatus(false);
+      setUserData(undefined);
       console.error("Błąd sieci: ", error);
     }
   };
@@ -54,10 +56,12 @@ export const LoginStatusProvider = ({ children }) => {
   useEffect(() => {
     checkLoginStatus();
     checkUserData();
-  }, []);
+  }, [loginStatus]);
 
   return (
-    <LoginStatusContext.Provider value={{ loginStatus, setLoginStatus, userData }}>
+    <LoginStatusContext.Provider
+      value={{ loginStatus, setLoginStatus, userData }}
+    >
       {children}
     </LoginStatusContext.Provider>
   );
