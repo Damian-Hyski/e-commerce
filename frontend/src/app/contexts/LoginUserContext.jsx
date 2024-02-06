@@ -1,19 +1,20 @@
 "use client";
 
+import { API_URL } from "../helpers/config";
 import { useAlert } from "./AlertContext";
-import { useLoginStatus } from "./LoginStatusContext";
+import { useUserData } from "./UserDataContext";
 
 const { createContext, useContext } = require("react");
 
 const LoginUserContext = createContext();
 
 export const LoginUserProvider = ({ children }) => {
-  const { setLoginStatus } = useLoginStatus();
+  const { setUserStatus } = useUserData();
   const { showAlert } = useAlert();
 
   const loginUser = async (username, password, csrfToken) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,7 +25,7 @@ export const LoginUserProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        setLoginStatus(true);
+        setUserStatus(true);
         showAlert("Pomyślnie zalogowano", "success");
       } else {
         console.error("Błąd logowania:", await response.text());

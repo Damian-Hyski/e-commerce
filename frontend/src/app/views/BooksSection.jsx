@@ -1,21 +1,27 @@
 "use client";
+
 import { motion, useTransform, useScroll } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Book } from "../components/Book";
+import { useProductsData } from "../contexts/ProductsDataContext";
+import Image from "next/image";
+import { API_URL } from "../helpers/config";
 import classNames from "classnames";
+import Link from "next/link";
 
 export function BooksSection() {
+  const bookContainerRef = useRef(null);
+  const targetRef = useRef(null);
+
+  const { productsData } = useProductsData();
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+  });
+
+  const [animation, setAnimation] = useState(false);
   const [width, setWidth] = useState({
     containerlWidth: 0,
     containerScrollWidth: 0,
   });
-
-  const [animation, setAnimation] = useState(false);
-
-  const [products, setProducts] = useState([]);
-
-  const bookContainerRef = useRef(null);
-  const targetRef = useRef(null);
 
   useEffect(() => {
     const updateWidth = () => {
@@ -27,47 +33,27 @@ export function BooksSection() {
           ? bookContainerRef.current.scrollWidth
           : 0,
       });
-
-      if (width.containerlWidth >= width.containerScrollWidth) {
-        setAnimation(false);
-      } else {
-        setAnimation(true);
-      }
     };
 
     window.addEventListener("resize", updateWidth);
     updateWidth();
 
     return () => window.removeEventListener("resize", updateWidth);
-  }, [products]);
+  }, [productsData, bookContainerRef.current, targetRef.current]);
 
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-  });
+  useEffect(() => {
+    if (width.containerlWidth >= width.containerScrollWidth) {
+      setAnimation(false);
+    } else {
+      setAnimation(true);
+    }
+  }, [width]);
 
   const x = useTransform(
     scrollYProgress,
     [0, 1],
-    [0, width.containerlWidth - width.containerScrollWidth + 32],
+    [0, width.containerlWidth - width.containerScrollWidth],
   );
-
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const res = await fetch("http://127.0.0.1:8000/products");
-        if (res.ok) {
-          const data = await res.json();
-          setProducts(data);
-        } else {
-          console.error("Failed to fetch products, status: ", res.status);
-        }
-      } catch (error) {
-        console.error("Problem with fetching products: ", error);
-      }
-    };
-
-    getProducts();
-  }, []);
 
   const dynamicClass = classNames({
     "relative bg-light": true,
@@ -82,19 +68,29 @@ export function BooksSection() {
           Sed ut perspiciatis.
         </h3>
         <motion.div
+        
           ref={bookContainerRef}
           style={animation ? { x } : {}}
-          className="-ml-8 flex h-full"
+          className="flex h-full"
         >
-          {products.map((product) => {
-            return (
-              <Book
-                key={product.id}
-                src={product.book_image}
-                slug={product.slug}
-              />
-            );
-          })}
+            {productsData.map((product) => {
+              return (
+                <div
+                  key={product.id}
+                  className="h-auto w-[450px] min-w-[450px] -ml-8"
+                >
+                  <Link href={`/book/${product.slug}/`}>
+                    <Image
+                      src={`${API_URL}${product.book_image}`}
+                      width={1000}
+                      height={1000}
+                      alt="book cover"
+                      priority
+                    />
+                  </Link>
+                </div>
+              );
+            })}
         </motion.div>
       </div>
     </section>

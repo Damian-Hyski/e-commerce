@@ -9,11 +9,12 @@ import { useCsrfToken } from "../contexts/CsrfTokenContext";
 
 import { useLoginStatus } from "../contexts/LoginStatusContext";
 import { useRouter } from "next/navigation";
+import { useUserData } from "../contexts/UserDataContext";
 
 export function RegistrationPanel() {
   const { csrfToken } = useCsrfToken();
   const { registerUser } = useRegisterUser();
-  const { loginStatus } = useLoginStatus();
+  const { userStatus } = useUserData();
 
   const [usernameValue, setUsernameValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
@@ -23,10 +24,10 @@ export function RegistrationPanel() {
   const router = useRouter();
 
   useEffect(() => {
-    if (loginStatus) {
+    if (userStatus) {
       router.push("/");
     }
-  }, [loginStatus]);
+  }, [userStatus]);
 
   async function handleSubmit(event) {
     event.preventDefault();

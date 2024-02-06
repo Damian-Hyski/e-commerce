@@ -3,6 +3,7 @@
 
 import { useRouter } from "next/navigation";
 import { useAlert } from "./AlertContext";
+import { API_URL } from "../helpers/config";
 
 const { createContext, useContext } = require("react");
 
@@ -24,7 +25,7 @@ export const RegisterUserProvider = ({ children }) => {
       return;
     }
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/register", {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

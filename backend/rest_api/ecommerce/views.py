@@ -50,10 +50,10 @@ def login_view(request):
 def check_login_status(request):
     if request.user.is_authenticated:
         # Użytkownik jest zalogowany
-        return Response({'is_logged_in': True}, status=status.HTTP_200_OK)
+        return Response({'status': True}, status=status.HTTP_200_OK)
     
     # Użytkownik nie jest zalogowany
-    return Response({'is_logged_in': False}, status=status.HTTP_200_OK)
+    return Response({'status': False}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @login_required

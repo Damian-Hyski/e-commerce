@@ -1,13 +1,7 @@
 "use client";
 
 import classNames from "classnames";
-import {
-  createContext,
-  useState,
-  useCallback,
-  useContext,
-  useEffect,
-} from "react";
+import { createContext, useState, useCallback, useContext } from "react";
 
 const AlertContext = createContext();
 
@@ -15,8 +9,7 @@ export const AlertProvider = ({ children }) => {
   const [alerts, setAlerts] = useState([]);
 
   const showAlert = useCallback((message, type = "info", timeout = 5000) => {
-    const id = new Date().getTime(); // Prosty sposób na wygenerowanie unikalnego ID
-
+    const id = new Date().getTime();
     setAlerts((currentAlerts) => [...currentAlerts, { id, message, type }]);
 
     setTimeout(() => {
@@ -30,7 +23,7 @@ export const AlertProvider = ({ children }) => {
     <AlertContext.Provider value={{ showAlert }}>
       {children}
       {alerts.map((alert, index) => {
-        const bottomOffset = 10 + index * 60; // Każdy kolejny alert będzie wyżej o 60px
+        const bottomOffset = 10 + index * 60;
         return (
           <div
             key={alert.id}
@@ -42,7 +35,7 @@ export const AlertProvider = ({ children }) => {
                 "bg-green": alert.type === "success",
               },
             )}
-            style={{ bottom: `${bottomOffset}px` }} // Dynamicznie przypisany margines od dołu
+            style={{ bottom: `${bottomOffset}px` }}
           >
             {alert.message}
           </div>

@@ -1,19 +1,20 @@
 "use client";
 
+import { API_URL } from "../helpers/config";
 import { useAlert } from "./AlertContext";
-import { useLoginStatus } from "./LoginStatusContext";
+import { useUserData } from "./UserDataContext";
 
 const { createContext, useContext } = require("react");
 
 const LogoutUserContext = createContext();
 
 export const LogoutUserProvider = ({ children }) => {
-  const { setLoginStatus } = useLoginStatus();
+  const { setUserStatus } = useUserData();
   const { showAlert } = useAlert();
 
   const logoutUser = async (csrfToken) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/logout", {
+      const response = await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -23,7 +24,7 @@ export const LogoutUserProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        setLoginStatus(false);
+        setUserStatus(false);
         showAlert("Pomyślnie wylogowano", "success")
       } else {
         console.error("Błąd wylogowywania:", await response.text());

@@ -8,11 +8,12 @@ import { useLoginStatus } from "../contexts/LoginStatusContext";
 import { useRouter } from "next/navigation";
 import { InputField } from "../components/ImputField";
 import { FormContainer } from "../components/FormContainer";
+import { useUserData } from "../contexts/UserDataContext";
 
 export function LoginPanel() {
   const { csrfToken } = useCsrfToken();
   const { loginUser } = useLoginUser();
-  const { loginStatus } = useLoginStatus();
+  const { userStatus } = useUserData();
 
   const [usernameValue, setUsernameValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
@@ -20,10 +21,10 @@ export function LoginPanel() {
   const router = useRouter();
 
   useEffect(() => {
-    if (loginStatus) {
+    if (userStatus) {
       router.push("/");
     }
-  }, [loginStatus]);
+  }, [userStatus]);
 
   async function handleSubmit(event) {
     event.preventDefault();

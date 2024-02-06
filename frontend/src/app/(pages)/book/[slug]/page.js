@@ -6,9 +6,9 @@ import { AddReviewProvider } from "@/app/contexts/AddReviewContext";
 export default function BookDetail({ params }) {
   return (
     <>
-      <BookInformation bookTitle={params.bookTitle} />
+      <BookInformation slug={params.slug} />
       <AddReviewProvider>
-        <Reviews bookTitle={params.bookTitle} />
+        <Reviews slug={params.slug} />
       </AddReviewProvider>
       <BooksSection />
     </>

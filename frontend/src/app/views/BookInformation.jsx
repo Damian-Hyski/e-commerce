@@ -3,40 +3,39 @@ import Image from "next/image";
 import Star from "/public/Star.svg";
 import { useEffect, useState } from "react";
 import { useAlert } from "../contexts/AlertContext";
+import { useProductsData } from "../contexts/ProductsDataContext";
+import { API_URL } from "../helpers/config";
+import { RatingStars } from "../components/RatingStars";
 
-export function BookInformation({ bookTitle }) {
-  const [data, setData] = useState({});
+export function BookInformation({ slug }) {
   const { showAlert } = useAlert();
+  const { selectProduct, productData } = useProductsData();
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
-    const fetchBookInfo = async () => {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:8000/products/${bookTitle}`,
-        );
-        if (response.ok) {
-          const jsonData = await response.json();
-          setData(jsonData);
-        } else {
-          console.error("Nie udało się pobrać danych produktu");
-        }
-      } catch (error) {
-        console.error("Błąd sieci: ", error);
-      }
-    };
+    selectProduct({ slug });
+  }, [selectProduct]);
 
-    fetchBookInfo();
-  }, [bookTitle]);
+  useEffect(() => {
+    if (productData && Array.isArray(productData.reviews)) {
+      const totalRating = productData.reviews.reduce(
+        (acc, review) => acc + review.rating,
+        0,
+      );
+      const average = totalRating / productData.reviews.length;
+      setAverageRating(average);
+    }
+  }, [productData]);
 
   const addToCart = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const newCartItem = {
-      id: data.id,
-      slug: data.slug,
-      title: data.title,
-      price: data.current_price,
-      image: data.book_image,
+      id: productData.id,
+      slug: productData.slug,
+      title: productData.title,
+      price: productData.current_price,
+      image: productData.book_image,
       quantity: 1,
     };
 
@@ -56,15 +55,14 @@ export function BookInformation({ bookTitle }) {
     <div className="flex h-screen w-full items-center bg-custom-gradient p-3 pb-8 pt-32">
       <div className="container mx-auto">
         <div className="flex w-full">
-          <div className="w-full">
-            {data.book_image && (
+          <div className="h-auto w-auto">
+            {productData.book_image && (
               <Image
-                src={`http://127.0.0.1:8000/${data.book_image}`}
+                src={API_URL + productData.book_image}
                 alt="Book Cover"
-                className="-ml-10 -mt-6 min-h-[90%] w-auto"
-                width={500}
-                height={710}
-                style={{width: "auto", height: "710px"}}
+                className="-ml-10 -mt-6"
+                width={1000}
+                height={1000}
                 priority
               />
             )}
@@ -72,52 +70,50 @@ export function BookInformation({ bookTitle }) {
           <div className="flex w-full flex-col justify-between uppercase leading-4 text-light">
             <div className="flex w-full flex-col gap-3 uppercase leading-4 text-light">
               <div className="flex gap-3">
-                <Image src={Star} alt="star" />
-                <Image src={Star} alt="star" />
-                <Image src={Star} alt="star" />
-                <Image src={Star} alt="star" />
-                <Image src={Star} alt="star" />
+                <RatingStars rating={averageRating} />
               </div>
               <div className="text-4xl font-black">
-                <h2>{data.title}</h2>
+                <h2>{productData.title}</h2>
               </div>
               <div className="flex w-full justify-between border-b">
                 <p className="font-bold">Autor:</p>
-                <p>{data.author}</p>
+                <p>{productData.author}</p>
               </div>
               <div className="flex w-full justify-between border-b">
                 <p className="font-bold">Wydawca:</p>
-                <p>{data.publisher}</p>
+                <p>{productData.publisher}</p>
               </div>
               <div className="flex w-full justify-between border-b">
                 <p className="font-bold">Rok wydania:</p>
-                <p>{data.publication_date}</p>
+                <p>{productData.publication_date}</p>
               </div>
               <div className="flex w-full justify-between border-b">
                 <p className="font-bold">Strony:</p>
-                <p>{data.pages}</p>
+                <p>{productData.pages}</p>
               </div>
               <div className="flex w-full justify-between border-b">
                 <p className="font-bold">Oprawa:</p>
-                <p>{data.binding}</p>
+                <p>{productData.binding}</p>
               </div>
               <div className="flex w-full justify-between border-b">
                 <p className="font-bold">Data premiery:</p>
-                <p>{data.release_date}</p>
+                <p>{productData.release_date}</p>
               </div>
               <div className="flex w-full justify-between border-b">
                 <p className="font-bold">Dostępne:</p>
-                <p>{data.quantity_in_stock} sztuk</p>
+                <p>{productData.quantity_in_stock} sztuk</p>
               </div>
               <div className="flex w-full flex-col gap-2">
                 <p className="font-bold">Opis:</p>
-                <p className="font-light">{data.description}</p>
+                <p className="font-light">{productData.description}</p>
               </div>
             </div>
             <div className="mb-16 flex w-full flex-col items-end gap-2">
               <div className="flex items-end gap-8">
-                <p className="line-through">{data.old_price} zł</p>
-                <p className="text-4xl leading-8">{data.current_price} zł</p>
+                <p className="line-through">{productData.old_price} zł</p>
+                <p className="text-4xl leading-8">
+                  {productData.current_price} zł
+                </p>
               </div>
               <div className="">
                 <button

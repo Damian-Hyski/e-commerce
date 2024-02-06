@@ -2,6 +2,8 @@ import { AlertProvider } from "./contexts/AlertContext";
 import { CsrfTokenProvider } from "./contexts/CsrfTokenContext";
 import { LoginStatusProvider } from "./contexts/LoginStatusContext";
 import { LogoutUserProvider } from "./contexts/LogoutUserContext";
+import { ProductsDataProvider } from "./contexts/ProductsDataContext";
+import { UserDataProvider } from "./contexts/UserDataContext";
 import "./globals.css";
 import { Footer } from "./views/Footer";
 import { Navbar } from "./views/Navbar";
@@ -14,19 +16,21 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="pl">
-      <LoginStatusProvider>
-        <body className=" overflow-x-hidden">
+      {/* <LoginStatusProvider> */}
+      <body className=" overflow-x-hidden">
+        <UserDataProvider>
           <AlertProvider>
             <CsrfTokenProvider>
               <LogoutUserProvider>
                 <Navbar />
               </LogoutUserProvider>
-              {children}
+              <ProductsDataProvider>{children}</ProductsDataProvider>
             </CsrfTokenProvider>
             <Footer />
           </AlertProvider>
-        </body>
-      </LoginStatusProvider>
+        </UserDataProvider>
+      </body>
+      {/* </LoginStatusProvider> */}
     </html>
   );
 }

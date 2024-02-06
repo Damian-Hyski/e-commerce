@@ -9,12 +9,12 @@ import BoxArrowLeft from "/public/BoxArrowLeft.svg";
 import BoxArrowRight from "/public/BoxArrowRight.svg";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { useLoginStatus } from "../contexts/LoginStatusContext";
 import { useLogoutUser } from "../contexts/LogoutUserContext";
 import { useCsrfToken } from "../contexts/CsrfTokenContext";
+import { useUserData } from "../contexts/UserDataContext";
 
 export function Navbar() {
-  const { loginStatus } = useLoginStatus();
+  const { userStatus } = useUserData();
   const { csrfToken } = useCsrfToken();
   const { logoutUser } = useLogoutUser();
   const [isOpen, setIsOpen] = useState(false);
@@ -76,7 +76,7 @@ export function Navbar() {
             </button>
             {isOpen && (
               <ul className="absolute right-0 z-20 mt-2 w-60 bg-light px-4 py-2 font-normal shadow-xl">
-                {loginStatus ? (
+                {userStatus ? (
                   <>
                     <li className="block px-4 py-2">
                       <Link
