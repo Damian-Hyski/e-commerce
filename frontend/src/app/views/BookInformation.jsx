@@ -1,6 +1,6 @@
 "use client";
+
 import Image from "next/image";
-import Star from "/public/Star.svg";
 import { useEffect, useState } from "react";
 import { useAlert } from "../contexts/AlertContext";
 import { useProductsData } from "../contexts/ProductsDataContext";

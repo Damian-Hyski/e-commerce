@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useLoginUser } from "../contexts/LoginUserContext";
 import { useCsrfToken } from "../contexts/CsrfTokenContext";
-import { useLoginStatus } from "../contexts/LoginStatusContext";
 import { useRouter } from "next/navigation";
 import { InputField } from "../components/ImputField";
 import { FormContainer } from "../components/FormContainer";

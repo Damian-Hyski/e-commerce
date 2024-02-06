@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Review } from "../components/Review";
-import { useLoginStatus } from "../contexts/LoginStatusContext";
 import Link from "next/link";
 import { useCsrfToken } from "../contexts/CsrfTokenContext";
 import { useAddReview } from "../contexts/AddReviewContext";

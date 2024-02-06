@@ -6,8 +6,6 @@ import { InputField } from "../components/ImputField";
 import Link from "next/link";
 import { useRegisterUser } from "../contexts/RegisterUserContext";
 import { useCsrfToken } from "../contexts/CsrfTokenContext";
-
-import { useLoginStatus } from "../contexts/LoginStatusContext";
 import { useRouter } from "next/navigation";
 import { useUserData } from "../contexts/UserDataContext";
 
