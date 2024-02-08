@@ -16,7 +16,7 @@ class AddressInline(admin.TabularInline):
     extra = 0
 
 class CartOrderAdmin(admin.ModelAdmin):
-    list_display = ('payment_id', CartOrder.get_products, 'get_total_cost', 'payment_status', 'status')
+    list_display = ('get_total_cost', 'payment_status', CartOrder.get_products, 'status')
 
     inlines = [CartOrderItemsInline, AddressInline]
 

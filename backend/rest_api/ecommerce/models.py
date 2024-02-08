@@ -117,6 +117,10 @@ class CartOrder(models.Model):
         products = CartOrderItems.objects.filter(order=self)
         id = [item.product.pid for item in products]
         return "".join(id)
+    
+    def get_total_cost(self):
+        # Sumuje koszt każdej pozycji w zamówieniu
+        return sum(item.get_cost() for item in self.cartorderitems_set.all())
 
 
 class CartOrderItems(models.Model):
@@ -127,9 +131,13 @@ class CartOrderItems(models.Model):
     class Meta:
         verbose_name_plural = 'Lista Produktów'
         
-    def get_total_cost(self, obj):
-        total_cost = sum(item.product.current_price * item.quantity for item in obj.cartorderitems_set.all())
-        return f"{total_cost:.2f} zł"
+    # def get_total_cost(self, obj):
+    #     total_cost = sum(item.product.current_price * item.quantity for item in obj.cartorderitems_set.all())
+    #     return f"{total_cost:.2f} zł"
+        
+    def get_cost(self):
+        # Oblicza koszt tej konkretnej pozycji zamówienia
+        return self.quantity * self.product.current_price
 
 
     def __str__(self):

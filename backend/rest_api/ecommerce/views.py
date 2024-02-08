@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product
+from .models import Product, CartOrder
 from .serializers import ProductSerializer, ProductReviewSerializer, UserSerializer, RegistrationUserSerializer, CartOrderSerializer
 import logging
 
@@ -160,29 +160,6 @@ def review_detail(request, slug, review_id):
 # Stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-@api_view(['POST'])
-def create_payment(request):
-    price = request.data.get('price')
-    try:
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card', 'blik', 'p24', 'paypal'],
-            line_items = [{
-                'price_data': {
-                    'currency': 'PLN',
-                    'unit_amount': price,
-                    'product_data': { 'name': 'books' }, 
-                    },
-                'quantity': 1,
-            }],
-            mode='payment',
-            success_url = 'http://127.0.0.1:3000/payment-success',
-            cancel_url = 'http://127.0.0.1:3000/payment-canceled',
-        )
-        return Response({'url': checkout_session.url})
-    except Exception as e:
-        return Response({'error': str(e)}, status=400)
-
-
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
@@ -191,10 +168,37 @@ def create_order(request):
     logger.info(f"Request user: {request.user}")
     serializer = CartOrderSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=201)
+        order = serializer.save()  # Zapisz zamówienie i przechowaj instancję zamówienia
+
+        # Tutaj możesz dodać logikę do obliczenia ceny na podstawie zamówienia
+        price = order.get_total_cost()  # Przykładowa funkcja, którą musisz zaimplementować
+        price_in_cents = int(price * 100)
+
+        try:
+            # Utwórz sesję płatności Stripe
+            payment_method = request.data['payment_method']
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=[payment_method],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'pln',
+                        'unit_amount': price_in_cents,  # Uwaga: cena powinna być w groszach
+                        'product_data': {'name': 'Zamówienie'},
+                    },
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url='http://127.0.0.1:3000/payment-success',
+                cancel_url='http://127.0.0.1:3000/payment-canceled',
+            )
+            order.payment_id = checkout_session['id']
+            order.save()
+            return Response({'url': checkout_session.url}, status=201)
+        except Exception as e:
+            logger.error('Błąd płatności Stripe: %s', e)
+            # Możesz zdecydować, co zrobić w przypadku niepowodzenia płatności (np. usunąć zamówienie, zarejestrować błąd itp.)
+            return Response({'error': str(e)}, status=400)
     else:
         logger.error('Błędy walidacji: %s', serializer.errors)
         return Response(serializer.errors, status=400)
-
 

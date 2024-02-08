@@ -3,9 +3,20 @@
 import { useEffect, useState } from "react";
 import { CartValue } from "../components/CartValue";
 import { CheckoutForm } from "../components/CheckoutForm";
+import { useUserData } from "../contexts/UserDataContext";
+import { useRouter } from "next/navigation";
 
 export function CheckoutSection() {
   const [cartItems, setCartItems] = useState([]);
+  const { userStatus } = useUserData();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!userStatus) {
+      router.push("/");
+    }
+  }, [userStatus]);
 
   const [userData, setUserData] = useState({
     address: {
@@ -19,7 +30,6 @@ export function CheckoutSection() {
     payment_method: "",
     cart: [],
   });
-
 
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];

@@ -1,44 +1,45 @@
 import Link from "next/link";
 import { API_URL } from "../helpers/config";
 import { useCsrfToken } from "../contexts/CsrfTokenContext";
+import { useUserData } from "../contexts/UserDataContext";
+import { useAlert } from "../contexts/AlertContext";
 
 export function CartValue({ totalPrice, checkput = false, userData }) {
   const { csrfToken } = useCsrfToken();
+  const { userStatus } = useUserData();
+  const { showAlert } = useAlert();
   const orderData = { ...userData, totalPrice };
 
   const redirectToCheckout = async () => {
-    // const response = await fetch(`${API_URL}/create-payment/`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "X-CSRFToken": csrfToken,
-    //   },
-    //   credentials: "include",
-    //   body: JSON.stringify({
-    //     price: (totalPrice + 10) * 100,
-    //   }),
-    // });
-    // const session = await response.json();
-    // if (session.url) {
-    //   window.location.href = session.url;
-    // } else {
-    //   console.error(
-    //     "Nie można przekierować do Stripe Checkout:",
-    //     session.error,
-    //   );
-    // }
+    try {
+      const response = await fetch(`${API_URL}/create-order/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        credentials: "include",
+        body: JSON.stringify(orderData),
+      });
 
-    const response = await fetch(`${API_URL}/create-order/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrfToken,
-      },
-      credentials: "include",
-      body: JSON.stringify(orderData),
-    });
-
-    console.log(orderData);
+      if (response.ok) {
+        const session = await response.json();
+        if (session.url) {
+          window.location.href = session.url;
+        } else {
+          console.error(
+            "Nie można przekierować do Stripe Checkout:",
+            session.error,
+          );
+        }
+      } else {
+        console.error("Błąd realizacji zamówienia:", await response.text());
+        showAlert("Realizacja zamówienia nie powiodła się", "error");
+      }
+    } catch (error) {
+      console.error("Błąd sieci: ", error);
+      showAlert("Błąd serwera", "error");
+    }
   };
 
   return (
@@ -61,17 +62,23 @@ export function CartValue({ totalPrice, checkput = false, userData }) {
         </div>
       </div>
       <div className="mt-8 flex justify-end">
-        {!checkput ? (
-          <Link href="/checkout" className="rounded-3xl border-2 px-4 py-2">
-            Do kasy
-          </Link>
+        {userStatus ? (
+          !checkput ? (
+            <Link href="/checkout" className="rounded-3xl border-2 px-4 py-2">
+              Do kasy
+            </Link>
+          ) : (
+            <button
+              onClick={redirectToCheckout}
+              className="rounded-3xl border-2 px-4 py-2"
+            >
+              Zapłać
+            </button>
+          )
         ) : (
-          <button
-            onClick={redirectToCheckout}
-            className="rounded-3xl border-2 px-4 py-2"
-          >
-            Zapłać
-          </button>
+          <Link href="/sign-in" className="rounded-3xl border-2 px-4 py-2">
+            Zaloguj się
+          </Link>
         )}
       </div>
     </div>
