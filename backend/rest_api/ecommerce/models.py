@@ -70,3 +70,79 @@ class ProductReview(models.Model):
     review = models.TextField(verbose_name='Recenzja')
     rating = models.IntegerField(choices=RATING, default=None, verbose_name='Ocena')
     date = models.DateTimeField(auto_now_add=True, verbose_name='Data')
+
+
+
+
+
+
+PAYMENT_METHOD = (
+    ('card', 'Karta'),
+    ('blik', 'Blik'),
+    ('p24', 'Przelewy 24'),
+    ('paypal', 'PayPal'),
+)
+
+DEVILERY_METHOD = (
+    ('inpost', 'InPost'),
+    ('poczta', 'Poczta Polska'),
+)
+
+STATUS_CHOICE = (
+    ('process', 'Przetwarzanie'),
+    ('shipped', 'Wysłany'),
+    ('devilered', 'Dostarczony'),
+)
+
+class CartOrder(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Użytkownik')
+    payment_id = models.CharField(max_length=255, null=True, blank=True, verbose_name='ID Zamówienia')
+    order_date = models.DateTimeField(auto_now_add=True)
+    payment_method = models.CharField(max_length=255, choices=PAYMENT_METHOD, verbose_name='Metoda Płatności')
+    delivery_method = models.CharField(max_length=255, choices=DEVILERY_METHOD, verbose_name='Metoda Dostawy')
+    payment_status = models.BooleanField(default=False, verbose_name='Opłacone')
+    products = models.ManyToManyField(Product, through='CartOrderItems', verbose_name='Lista Produktów')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICE, default='process', verbose_name='Status')
+    
+
+    class Meta:
+        verbose_name_plural = 'Zamówienia'
+
+    def get_products(self):
+        products = CartOrderItems.objects.filter(order=self)
+        product_info = [f"{item.product.title} ({item.quantity} szt.)" for item in products]
+        return ", ".join(product_info)
+    
+    def get_products_id(self):
+        products = CartOrderItems.objects.filter(order=self)
+        id = [item.product.pid for item in products]
+        return "".join(id)
+
+
+class CartOrderItems(models.Model):
+    order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Lista Produktów')
+    quantity = models.PositiveIntegerField(verbose_name='Ilość Produktów')
+
+    class Meta:
+        verbose_name_plural = 'Lista Produktów'
+        
+    def get_total_cost(self, obj):
+        total_cost = sum(item.product.current_price * item.quantity for item in obj.cartorderitems_set.all())
+        return f"{total_cost:.2f} zł"
+
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product.title} in Order {self.order.id}"
+    
+class Address(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    name = models.CharField(max_length=255, verbose_name='Imię i Nazwisko')
+    email = models.EmailField(verbose_name='Email')
+    address = models.CharField(max_length=255, verbose_name='Adres')
+    zip_code = models.CharField(max_length=10, verbose_name='Kod Pocztowy')
+    city = models.CharField(max_length=255, verbose_name='Miasto')
+    cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE, related_name='addresses', null=True, blank=True, verbose_name='Koszyk')
+
+    class Meta:
+        verbose_name_plural = 'Adres Dostawy'

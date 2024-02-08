@@ -1,14 +1,17 @@
 from django.shortcuts import render
+import stripe
+from django.conf import settings
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Product
-from .serializers import ProductSerializer, ProductReviewSerializer, UserSerializer, RegistrationUserSerializer
+from .serializers import ProductSerializer, ProductReviewSerializer, UserSerializer, RegistrationUserSerializer, CartOrderSerializer
+import logging
 
 
 # CSRF Token
@@ -150,3 +153,48 @@ def review_detail(request, slug, review_id):
     elif request.method == 'DELETE':
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+
+
+# Stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+@api_view(['POST'])
+def create_payment(request):
+    price = request.data.get('price')
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card', 'blik', 'p24', 'paypal'],
+            line_items = [{
+                'price_data': {
+                    'currency': 'PLN',
+                    'unit_amount': price,
+                    'product_data': { 'name': 'books' }, 
+                    },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url = 'http://127.0.0.1:3000/payment-success',
+            cancel_url = 'http://127.0.0.1:3000/payment-canceled',
+        )
+        return Response({'url': checkout_session.url})
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
+
+logger = logging.getLogger(__name__)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_order(request):
+    logger.info(f"Request user: {request.user}")
+    serializer = CartOrderSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
+    else:
+        logger.error('Błędy walidacji: %s', serializer.errors)
+        return Response(serializer.errors, status=400)
+
+

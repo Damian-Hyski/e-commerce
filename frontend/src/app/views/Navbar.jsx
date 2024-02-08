@@ -81,7 +81,7 @@ export function Navbar() {
                     <li className="block px-4 py-2">
                       <Link
                         className="flex items-center gap-4"
-                        href=""
+                        href="/profil"
                         onClick={() => setIsOpen(false)}
                       >
                         <Image

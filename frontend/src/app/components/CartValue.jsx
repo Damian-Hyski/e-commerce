@@ -1,6 +1,46 @@
 import Link from "next/link";
+import { API_URL } from "../helpers/config";
+import { useCsrfToken } from "../contexts/CsrfTokenContext";
 
-export function CartValue({ totalPrice }) {
+export function CartValue({ totalPrice, checkput = false, userData }) {
+  const { csrfToken } = useCsrfToken();
+  const orderData = { ...userData, totalPrice };
+
+  const redirectToCheckout = async () => {
+    // const response = await fetch(`${API_URL}/create-payment/`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "X-CSRFToken": csrfToken,
+    //   },
+    //   credentials: "include",
+    //   body: JSON.stringify({
+    //     price: (totalPrice + 10) * 100,
+    //   }),
+    // });
+    // const session = await response.json();
+    // if (session.url) {
+    //   window.location.href = session.url;
+    // } else {
+    //   console.error(
+    //     "Nie można przekierować do Stripe Checkout:",
+    //     session.error,
+    //   );
+    // }
+
+    const response = await fetch(`${API_URL}/create-order/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken,
+      },
+      credentials: "include",
+      body: JSON.stringify(orderData),
+    });
+
+    console.log(orderData);
+  };
+
   return (
     <div className="rounded-lg bg-light px-6 py-4 text-dark">
       <h3 className="text-xl font-black">Wartość koszyka</h3>
@@ -21,9 +61,18 @@ export function CartValue({ totalPrice }) {
         </div>
       </div>
       <div className="mt-8 flex justify-end">
-        <Link href="/checkout" className="rounded-3xl border-2 px-4 py-2">
-          Do kasy
-        </Link>
+        {!checkput ? (
+          <Link href="/checkout" className="rounded-3xl border-2 px-4 py-2">
+            Do kasy
+          </Link>
+        ) : (
+          <button
+            onClick={redirectToCheckout}
+            className="rounded-3xl border-2 px-4 py-2"
+          >
+            Zapłać
+          </button>
+        )}
       </div>
     </div>
   );
