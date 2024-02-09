@@ -23,6 +23,8 @@ export function CartValue({ totalPrice, checkput = false, userData }) {
       });
 
       if (response.ok) {
+        localStorage.removeItem("cart");
+
         const session = await response.json();
         if (session.url) {
           window.location.href = session.url;
