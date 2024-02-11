@@ -22,6 +22,6 @@ urlpatterns = [
     path('products/<slug:slug>/reviews/<int:review_id>', views.review_detail),
 
     # Stripe
-    # path('create-payment/', views.create_payment, name='create-payment'),
     path('create-order/', views.create_order, name='create-order'),
+    path('webhook/', views.webhook, name='webhook'),
 ]

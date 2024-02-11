@@ -12,6 +12,7 @@ from rest_framework import status
 from .models import Product, CartOrder
 from .serializers import ProductSerializer, ProductReviewSerializer, UserSerializer, RegistrationUserSerializer, CartOrderSerializer
 import logging
+import os
 
 
 # CSRF Token
@@ -159,6 +160,8 @@ def review_detail(request, slug, review_id):
 
 # Stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
+STRIPE_ENDPOINT_SECRED = os.getenv('STRIPE_ENDPOINT_SECRED')
+endpoint_secret = STRIPE_ENDPOINT_SECRED
 
 logger = logging.getLogger(__name__)
 
@@ -168,31 +171,31 @@ def create_order(request):
     logger.info(f"Request user: {request.user}")
     serializer = CartOrderSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
-        order = serializer.save()  # Zapisz zamówienie i przechowaj instancję zamówienia
+        order = serializer.save()
 
-        # Tutaj możesz dodać logikę do obliczenia ceny na podstawie zamówienia
-        price = order.get_total_cost()  # Przykładowa funkcja, którą musisz zaimplementować
+        price = order.get_total_cost()
         price_in_cents = int(price * 100)
 
         try:
-            # Utwórz sesję płatności Stripe
             payment_method = request.data['payment_method']
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=[payment_method],
                 line_items=[{
                     'price_data': {
                         'currency': 'pln',
-                        'unit_amount': price_in_cents,  # Uwaga: cena powinna być w groszach
+                        'unit_amount': price_in_cents,
                         'product_data': {'name': 'Zamówienie'},
                     },
                     'quantity': 1,
                 }],
                 mode='payment',
-                success_url='http://127.0.0.1:3000/payment-success',
+                success_url='http://127.0.0.1:3000/payment-success/' + str(order.id),
                 cancel_url='http://127.0.0.1:3000/payment-canceled',
             )
+
             order.payment_id = checkout_session['id']
             order.save()
+
             return Response({'url': checkout_session.url}, status=201)
         except Exception as e:
             logger.error('Błąd płatności Stripe: %s', e)
@@ -202,3 +205,35 @@ def create_order(request):
         logger.error('Błędy walidacji: %s', serializer.errors)
         return Response(serializer.errors, status=400)
 
+
+@api_view(['POST'])
+def webhook(request):
+    payload = request.body.decode('utf-8')
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Nieprawidłowe dane
+        return Response(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Nieprawidłowy podpis
+        return Response(status=400)
+
+    # Obsługa zdarzeń webhooka
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        # Aktualizuj status zamówienia w bazie danych
+        try:
+            order = CartOrder.objects.get(payment_id=session.id)
+            order.payment_status = True
+            # order.status = 'shipped'  # lub inny odpowiedni status
+            order.save()
+        except CartOrder.DoesNotExist:
+            logger.error(f"Nie znaleziono zamówienia z payment_id {session.id}")
+            return Response(status=400)
+
+    return Response(status=200)

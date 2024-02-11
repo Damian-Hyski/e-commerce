@@ -1,6 +1,7 @@
 import { AlertProvider } from "./contexts/AlertContext";
 import { CsrfTokenProvider } from "./contexts/CsrfTokenContext";
 import { LogoutUserProvider } from "./contexts/LogoutUserContext";
+import { PaymentProcessedProvider } from "./contexts/PaymentContext";
 import { ProductsDataProvider } from "./contexts/ProductsDataContext";
 import { UserDataProvider } from "./contexts/UserDataContext";
 import "./globals.css";
@@ -22,7 +23,9 @@ export default function RootLayout({ children }) {
               <LogoutUserProvider>
                 <Navbar />
               </LogoutUserProvider>
-              <ProductsDataProvider>{children}</ProductsDataProvider>
+              <ProductsDataProvider>
+                <PaymentProcessedProvider>{children}</PaymentProcessedProvider>
+              </ProductsDataProvider>
             </CsrfTokenProvider>
             <Footer />
           </AlertProvider>
