@@ -67,7 +67,7 @@ export function CartProduct({ id, slug, image, title, quantity, price, updateCar
         <div>
           <Link href={`/book/${slug}`}>
             <Image
-              src={`http://127.0.0.1:8000/${image}`}
+              src={`http://127.0.0.1:8000${image}`}
               width={100}
               height={96}
               className="h-24 w-auto"
