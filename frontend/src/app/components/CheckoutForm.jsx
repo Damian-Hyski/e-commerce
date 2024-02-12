@@ -25,7 +25,7 @@ export function CheckoutForm({ setUserData }) {
       <form method="POST">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-6">
-            <h4 className="font-black">Twoje dane</h4>
+            <h4 className="font-black">Dane dostawy</h4>
             <div className="flex flex-col gap-2">
               <div>
                 <label htmlFor="name">Imię i nazwisko</label>
@@ -101,7 +101,7 @@ export function CheckoutForm({ setUserData }) {
                 }
               />
               <div>
-                <label htmlFor="post">Poczta polska</label>
+                <label htmlFor="post">Do domu</label>
               </div>
             </div>
             <div className="flex gap-2">
@@ -111,12 +111,15 @@ export function CheckoutForm({ setUserData }) {
                 name="delivery_method"
                 id="inpost"
                 value="inpost"
+                disabled
                 onChange={(e) =>
                   handleChange("delivery_method", e.target.value)
                 }
               />
               <div>
-                <label htmlFor="inpost">Inpost</label>
+                <label htmlFor="inpost" className=" text-[#999999]">
+                  Inpost <spam>- Chwilowo niedostępne</spam>
+                </label>
               </div>
             </div>
           </div>
